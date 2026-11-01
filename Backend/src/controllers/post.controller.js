@@ -1,44 +1,94 @@
-import { Post } from '../models/post.model.js';
-import { fail } from '../middleware/errors.js';
-function postFields(body, partial = false) {
-  if (!body || typeof body !== 'object' || Array.isArray(body)) fail(400, 'A JSON object is required');
-  const fields = {};
-  for (const key of ['title', 'content']) {
-    if (partial && body[key] === undefined) continue;
-    if (typeof body[key] !== 'string' || !body[key].trim()) fail(400, `${key} must be a non-empty string`);
-    fields[key] = body[key].trim();
-  }
-  if (!Object.keys(fields).length) fail(400, 'Provide title or content');
-  return fields;
+import { Post } from "../models/post.model.js";
+
+// Create a post
+const createPost = async (req, res) => {
+    try {
+        const { name, description, age} = req.body;
+
+        if(!name || !description || !age) {
+            return res.status(400).json({
+                message: "All field are required"
+            });
+        }
+
+        const post = await Post.create({ name, description, age });
+
+        res.status(201).json({
+            message: "Post created successfully", post
+        });
+    
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server error", error
+        });
+    }
 }
-export async function createPost(req, res) {
-  const post = await Post.create({ ...postFields(req.body), author: req.userId });
-  res.status(201).json({ post });
+
+// Read all posts
+const getPosts = async (req, res) => {
+    try {
+        const posts = await Post.find();
+        res.status(200).json(posts);
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server error", 
+            error
+        });
+    }
 }
-export async function getPosts(req, res) {
-  const posts = await Post.find().sort({ createdAt: -1 }).limit(100).populate('author', 'username');
-  res.json({ posts });
+
+
+const updatePost = async (req, res) => {
+    try {
+        // basic validaiton to check if the body is empty
+
+        // {name: x, description: y, age: z} -> [name, description, age]
+        // {} = truthy 
+        if(Object.keys(req.body).length === 0) {
+            return res.status(400).json({
+                message: "No data provided for update"
+            });
+        }
+
+        const post = await Post.findByIdAndUpdate(req.params.id, req.body, {new: true});
+
+        if(!post) return res.status(404).json({
+            message: "Post not found"
+        });
+
+        res.status(200).json({
+            message: "Post Updated Successfully", post
+        });
+
+    } catch (error) {
+                res.status(500).json({
+            message: "Internal Server error", 
+            error
+
+    })
 }
-export async function getPost(req, res) {
-  const post = await Post.findById(req.params.id).populate('author', 'username');
-  if (!post) fail(404, 'Post not found');
-  res.json({ post });
 }
-async function ownedPost(req) {
-  const post = await Post.findById(req.params.id);
-  if (!post) fail(404, 'Post not found');
-  if (String(post.author) !== String(req.userId)) fail(403, 'Only the author can change this post');
-  return post;
+
+const deletePost = async (req, res) => {
+    try {
+        const deleted = await Post.findByIdAndDelete(req.params.id);
+        if(!deleted) return res.status(404).json({
+            message: "Post not found"
+        });
+
+        res.status(200).json({
+            message: "Post successfully deleted"
+        })
+    } catch (error) {
+         res.status(500).json({
+            message: "Internal Server error", 
+            error
+    });
 }
-export async function updatePost(req, res) {
-  const fields = postFields(req.body, true);
-  const post = await ownedPost(req);
-  Object.assign(post, fields);
-  await post.save();
-  res.json({ post });
 }
-export async function deletePost(req, res) {
-  const post = await ownedPost(req);
-  await post.deleteOne();
-  res.json({ message: 'Post deleted' });
-}
+export {
+createPost,
+getPosts,
+updatePost,
+deletePost
+};

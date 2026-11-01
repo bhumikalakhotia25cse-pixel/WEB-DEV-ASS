@@ -1,8 +1,51 @@
-import mongoose from 'mongoose';
-const schema = new mongoose.Schema({
-  username: { type: String, required: true, trim: true, minlength: 2, maxlength: 60 },
-  email: { type: String, required: true, unique: true, lowercase: true, trim: true, maxlength: 254, match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
-  password: { type: String, required: true, select: false },
-}, { timestamps: true });
-schema.set('toJSON', { transform(doc, result) { delete result.password; return result; } });
-export const User = mongoose.model('User', schema);
+import mongoose, { Schema } from "mongoose";
+import bcrypt from "bcrypt";
+
+const userSchema = new Schema(
+    {
+        username: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true,
+            minLength: 1,
+            maxLength: 30         
+        },
+
+        password: {
+            type: String,
+            required: true,
+            minLength: 6,
+            maxLength: 50
+        },
+
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true
+        }
+        
+    },
+
+    {
+        timestamps: true
+    }
+)
+
+// before saving any password we need to hash it
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) return next();
+    this.password = await bcrypt.hash(this.password, 10);
+
+    next();
+});
+
+// compare passwords
+userSchema.methods.comparePassword = async function (password) {
+    return await bcrypt.compare(password, this.password)
+}
+
+export const User = mongoose.model("User", userSchema)

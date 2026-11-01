@@ -1,8 +1,11 @@
 import { Router } from 'express';
-import { registerUser, loginUser, logoutUser } from '../controllers/user.controller.js';
-import { requireAuth } from '../middleware/auth.js';
+import { loginUser, logoutuser, registerUser } from '../controllers/user.controller.js';
+
 const router = Router();
-router.post('/register', registerUser);
-router.post('/login', loginUser);
-router.post('/logout', requireAuth, logoutUser);
+
+router.route('/register').post(registerUser);
+router.route('/login').post(loginUser);
+router.route('/logout').post(logoutuser);
+
+
 export default router;

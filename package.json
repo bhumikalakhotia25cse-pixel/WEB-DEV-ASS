@@ -1,19 +1,28 @@
 {
   "name": "intro-to-backend",
   "version": "1.0.0",
-  "private": true,
+  "description": "a tutorial for intro to backend",
+  "main": "Backend/src/index.js",
   "type": "module",
-  "engines": { "node": ">=22" },
   "scripts": {
     "start": "node Backend/src/index.js",
-    "dev": "nodemon Backend/src/index.js",
-    "test": "node --test Backend/test/*.test.js",
-    "test:integration": "node --test Backend/test/integration/*.test.js"
+    "dev": "nodemon Backend/src/index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bhumikalakhotia25cse-pixel/WEB-DEV-ASS.git"
+  },
+  "author": "Bhumika",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bhumikalakhotia25cse-pixel/WEB-DEV-ASS/issues"
+  },
+  "homepage": "https://github.com/bhumikalakhotia25cse-pixel/WEB-DEV-ASS#readme",
   "dependencies": {
-    "dotenv": "^18.0.9",
-    "express": "^5.3.0",
-    "mongoose": "^9.11.4",
-    "nodemon": "^3.1.14"
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "mongoose": "^8.18.3",
+    "nodemon": "^3.1.10"
   }
 }
