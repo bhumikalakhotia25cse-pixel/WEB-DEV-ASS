@@ -1,0 +1,21 @@
+{
+  "name": "web-dev-ass",
+  "version": "1.0.0",
+  "description": "evaluation 3 web deb backend",
+  "homepage": "https://github.com/bhumikalakhotia25cse-pixel/WEB-DEV-ASS#readme",
+  "bugs": {
+    "url": "https://github.com/bhumikalakhotia25cse-pixel/WEB-DEV-ASS/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bhumikalakhotia25cse-pixel/WEB-DEV-ASS.git"
+  },
+  "license": "ISC",
+  "author": "Bhumika",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  }
+}
